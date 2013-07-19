@@ -22,7 +22,7 @@ import play.api.test.Helpers.header
 import play.api.test.Helpers.route
 import play.api.test.Helpers.status
 import play.api.test.Helpers.writeableOf_AnyContentAsEmpty
-import test.AorraScalaHelper.FakeAorraApp
+import test.AorraScalaHelper.AorraApp
 import test.AorraScalaHelper.asAdminUser
 import test.AorraScalaHelper.filestore
 
@@ -32,7 +32,7 @@ class FileStoreAsyncSpec extends Specification {
 
   "notifications" should {
 
-    "requires login" in new FakeAorraApp {
+    "requires login" in new AorraApp {
       asAdminUser { (session: Session, user: User, rh: FakeHeaders) =>
         val Some(result) = route(FakeRequest(GET, "/notifications"))
 
@@ -41,7 +41,7 @@ class FileStoreAsyncSpec extends Specification {
       }
     }
 
-    "returns JSON by default" in new FakeAorraApp {
+    "returns JSON by default" in new AorraApp {
       asAdminUser { (session: Session, user: User, rh: FakeHeaders) =>
         val Some(result) = route(
             FakeRequest(GET, "/notifications", rh, AnyContentAsEmpty))
@@ -53,7 +53,7 @@ class FileStoreAsyncSpec extends Specification {
       }
     }
 
-    "returns Server Sent Events based on Accept header" in new FakeAorraApp {
+    "returns Server Sent Events based on Accept header" in new AorraApp {
       asAdminUser { (session: Session, user: User, rh: FakeHeaders) =>
         val Some(result) = route(
             FakeRequest(GET, "/notifications", rh, AnyContentAsEmpty)
@@ -71,7 +71,7 @@ class FileStoreAsyncSpec extends Specification {
       }
     }
 
-    "returns events in the past" in new FakeAorraApp {
+    "returns events in the past" in new AorraApp {
       asAdminUser { (session: Session, user: User, rh: FakeHeaders) =>
         val file = filestore.getManager(session).getRoot()
           .createFile("test.txt", "text/plain",

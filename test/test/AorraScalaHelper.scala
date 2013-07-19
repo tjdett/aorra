@@ -22,9 +22,9 @@ import service.filestore.FileStore
 
 object AorraScalaHelper {
 
-  def fakeAorraApp = AorraTestUtils.fakeAorraApp().getWrappedApplication
+  def fakeAorraApp = AorraTestUtils.fakeAorraApp(false).getWrappedApplication
 
-  class FakeAorraApp extends WithApplication(fakeAorraApp)
+  class AorraApp extends WithApplication(fakeAorraApp)
 
   def filestore = injector.getInstance(classOf[FileStore])
   def injector = GuiceInjectionPlugin.getInjector(play.Play.application())
