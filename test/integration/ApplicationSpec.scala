@@ -14,11 +14,11 @@ import org.fluentlenium.core.FluentPage
 class ApplicationSpec extends Specification {
 
   class HtmlUnit extends WithBrowser(classOf[MyHtmlUnitDriver], fakeAorraApp) {
-    def page(theUrl: String): FluentPage = {
+    def page(relUrl: String): FluentPage = {
       new FluentPage(browser.getDriver()) {
-        override def getUrl = theUrl
+        override def getUrl = browser.baseUrl.get + relUrl
         override def isAt {
-          url().must_==(theUrl)
+          url().must_==(getUrl)
         }
       }
     }
@@ -32,15 +32,18 @@ class ApplicationSpec extends Specification {
     }
 
     "login page allows login" in new HtmlUnit {
+      val loginPage = page("/login")
+
       // Create User
       var email = ""
       asAdminUser({ (session, user, newRequest) =>
         email = user.getEmail()
       })
 
-      browser.goTo("/login")
-      browser.fill("form input[name='email']").`with`(email)
-      browser.fill("form input[name='password']").`with`("password")
+      browser.goTo(loginPage).await.atMost(5, TimeUnit.SECONDS).untilPage.isLoaded
+      browser.pageSource must endWith("</html>")
+      browser.fill("#email").`with`(email)
+      browser.fill("#password").`with`("password")
       browser.click("form button[type='submit']")
       browser.await().atMost(5, TimeUnit.SECONDS).untilPage(page("/")).isAt()
     }
